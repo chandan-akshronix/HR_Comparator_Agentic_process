@@ -10,18 +10,35 @@ DATABASE_NAME = os.getenv("DATABASE_NAME", "hr_resume_comparator")
 def get_client():
     return MongoClient(MONGODB_URL)
 
+# ---------------------------
+# JD & Resume Fetchers
+# ---------------------------
 def fetch_jd_by_id(jd_id: str):
+    """Fetch JD text from JobDescription collection."""
     client = get_client()
     db = client[DATABASE_NAME]
     jd = db["JobDescription"].find_one({"_id": jd_id})
     client.close()
     return jd.get("text", "") if jd else ""
 
-def fetch_resumes_by_jd_id(jd_id: str):
+def fetch_resume_by_id(resume_id):
+    """Fetch resume text by ObjectId or string from Resume collection."""
     client = get_client()
     db = client[DATABASE_NAME]
-    resumes = []
-    for doc in db["Resume"].find({"jd_id": jd_id, "processed": {"$ne": True}}):
-        resumes.append({"_id": str(doc["_id"]), "text": doc.get("text", "")})
+    resume = db["Resume"].find_one({"_id": resume_id})
     client.close()
-    return resumes
+    return resume.get("text", "") if resume else ""
+
+# ---------------------------
+# Workflow Fetcher
+# ---------------------------
+def fetch_workflow_by_id(workflow_id: str):
+    """
+    Fetch a workflow execution record by workflow_id
+    from DB: hr_resume_comparator.hr_resume_comparator.workflow_executions
+    """
+    client = get_client()
+    db = client["hr_resume_comparator"]
+    doc = db["hr_resume_comparator.workflow_executions"].find_one({"workflow_id": workflow_id})
+    client.close()
+    return doc
