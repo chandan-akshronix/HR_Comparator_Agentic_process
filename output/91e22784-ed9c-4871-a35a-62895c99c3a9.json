@@ -1,0 +1,26 @@
+{
+  "fit_category": "Best Fit",
+  "total_score": 88,
+  "parameter_breakdown": {
+    "Skill_Score": 35,
+    "Experience_Score": 22,
+    "Project_Score": 12,
+    "Education_Score": 10,
+    "Soft_Skill_Score": 5,
+    "Location_Score": 4
+  },
+  "risk_factors": [
+    "No explicit mention of soft skills in the resume",
+    "Current location not specified, potential relocation risk"
+  ],
+  "growth_signals": [
+    "ISTQB certification indicates commitment to professional development",
+    "Experience with Agile/Scrum methodology and CI/CD pipelines shows adaptability to modern workflows",
+    "Consistent career progression in relevant roles"
+  ],
+  "recruiter_confidence": "High",
+  "selection_reason": "Ankit Verma is a strong candidate for the Application Testing Engineer role. He meets all the technical skill requirements, including manual and automation testing, Selenium, JIRA, Postman, and SQL queries. His experience aligns well with the job description, as he has 3 years of relevant experience in application testing, including functional, regression, and API testing. His ISTQB certification adds credibility to his testing expertise, and his exposure to Agile/Scrum and CI/CD pipelines is a bonus. While the resume lacks explicit mention of soft skills, his responsibilities in previous roles suggest collaboration and problem-solving abilities. The only minor risk is the lack of clarity on his current location, which could pose a relocation challenge. Overall, he demonstrates strong technical competence, relevant experience, and growth potential, making him a best fit for the role.",
+  "resume_id": "91e22784-ed9c-4871-a35a-62895c99c3a9",
+  "resume_extracted": "```json\n{\n  \"Name\": \"Ankit Verma\",\n  \"Email\": \"ankit.verma@gmail.com\",\n  \"Mobile\": \"+91-9876123456\",\n  \"Total_Experience_Years\": \"3\",\n  \"Technical_Skills\": [\n    \"Manual Testing\",\n    \"Automation Testing\",\n    \"Selenium\",\n    \"TestNG\",\n    \"API Testing\",\n    \"Postman\",\n    \"SQL Queries\",\n    \"Agile/Scrum Methodology\",\n    \"Defect Tracking (JIRA, Bugzilla)\",\n    \"CI/CD (Jenkins)\"\n  ],\n  \"Soft_Skills\": [],\n  \"Education\": \"\",\n  \"Projects\": [],\n  \"Certifications\": [\n    \"ISTQB Certified Tester \u2013 Foundation Level\"\n  ],\n  \"Domain_Experience\": \"Web and Mobile Application Testing\",\n  \"Current_Location\": \"\",\n  \"Career_History\": [\n    {\n      \"Job_Title\": \"Application Tester\",\n      \"Company\": \"ABC Tech\",\n      \"Start_Date\": \"Jan 2022\",\n      \"End_Date\": \"Present\",\n      \"Responsibilities\": [\n        \"Designed and executed test cases for web and mobile apps.\",\n        \"Automated regression test cases using Selenium WebDriver.\",\n        \"Validated APIs using Postman and automated test scripts.\",\n        \"Worked closely with developers to resolve defects in Agile sprints.\"\n      ]\n    },\n    {\n      \"Job_Title\": \"QA Analyst\",\n      \"Company\": \"PQR Solutions\",\n      \"Start_Date\": \"Jan 2021\",\n      \"End_Date\": \"Dec 2021\",\n      \"Responsibilities\": [\n        \"Conducted functional and regression testing on enterprise apps.\",\n        \"Prepared test plans and detailed bug reports.\"\n      ]\n    }\n  ]\n}\n```",
+  "jd_extracted": "```json\n{\n  \"Position\": \"Application Testing Engineer\",\n  \"Experience_Required_Years\": \"1\u20135\",\n  \"Must_Have_Skills\": [\n    \"Manual testing\",\n    \"Automation testing\",\n    \"SDLC\",\n    \"STLC\",\n    \"Defect life cycle\",\n    \"Selenium\",\n    \"JIRA\",\n    \"Postman\",\n    \"SQL queries\"\n  ],\n  \"Nice_To_Have_Skills\": [\n    \"ISTQB Certification\",\n    \"Agile/Scrum methodology\",\n    \"CI/CD pipelines (e.g., Jenkins)\"\n  ],\n  \"Education\": \"\",\n  \"Responsibilities\": [\n    \"Perform functional, regression, integration, and UAT testing for applications\",\n    \"Create and execute detailed test cases, test plans, and scripts\",\n    \"Identify, track, and report defects using tools like JIRA or Bugzilla\",\n    \"Collaborate with development teams to ensure quality deliverables\",\n    \"Execute automation scripts using tools such as Selenium, TestNG, or Cypress\",\n    \"Validate APIs using tools like Postman\",\n    \"Document test results and maintain test reports\"\n  ],\n  \"Soft_Skills\": [\n    \"Problem-solving skills\",\n    \"Attention to detail\"\n  ],\n  \"Location\": \"Bangalore, India (Hybrid)\",\n  \"Industry\": \"Software/IT\"\n}\n```"
+}

@@ -1,0 +1,30 @@
+{
+  "fit_category": "Not Fit",
+  "total_score": 57,
+  "parameter_breakdown": {
+    "Skill_Score": 20,
+    "Experience_Score": 15,
+    "Project_Score": 5,
+    "Education_Score": 8,
+    "Soft_Skill_Score": 5,
+    "Location_Score": 4
+  },
+  "risk_factors": [
+    "Limited technical skills (missing automation testing, Selenium, Postman, advanced SQL)",
+    "No certifications (e.g., ISTQB) to validate testing knowledge",
+    "No mention of soft skills like problem-solving or attention to detail",
+    "Limited professional experience (only 1 year as an intern)",
+    "No evidence of handling automation or API testing"
+  ],
+  "growth_signals": [
+    "Recent graduate with foundational QA knowledge",
+    "Experience with JIRA and defect tracking",
+    "Exposure to SDLC and STLC processes",
+    "Potential to grow into automation testing with proper training"
+  ],
+  "recruiter_confidence": "Low",
+  "selection_reason": "Priya Sharma demonstrates foundational QA skills such as manual testing, defect tracking, and familiarity with SDLC/STLC, which align partially with the job requirements. However, she lacks critical technical skills like automation testing, Selenium, and Postman, which are must-haves for the role. Additionally, her experience is limited to an internship, and there is no evidence of certifications or advanced projects to validate her expertise. While she shows potential for growth, the current skill gap and lack of experience in automation testing pose a risk. With proper training and mentorship, she could grow into the role, but she is not an immediate best fit for the position.",
+  "resume_id": "beffb5ee-6d58-42b5-acf4-c10a48abd2e3",
+  "resume_extracted": "```json\n{\n  \"Name\": \"Priya Sharma\",\n  \"Email\": \"priya.sharma@gmail.com\",\n  \"Mobile\": \"+91-9876543210\",\n  \"Total_Experience_Years\": \"1\",\n  \"Technical_Skills\": [\n    \"Manual Testing (Functional, Regression)\",\n    \"Defect Tracking (JIRA)\",\n    \"SQL Basics\",\n    \"SDLC & STLC\",\n    \"Test Case Design\"\n  ],\n  \"Soft_Skills\": [],\n  \"Education\": \"B.Tech in Computer Science \u2013 ABC University (2023)\",\n  \"Projects\": [],\n  \"Certifications\": [],\n  \"Domain_Experience\": \"QA/Software Testing\",\n  \"Current_Location\": \"\",\n  \"Career_History\": [\n    {\n      \"Role\": \"QA Intern\",\n      \"Company\": \"XYZ Technologies\",\n      \"Duration\": \"Jan 2024 \u2013 Dec 2024\",\n      \"Responsibilities\": [\n        \"Created and executed test cases for web applications.\",\n        \"Logged and tracked bugs using JIRA.\",\n        \"Performed cross-browser testing and documented test results.\"\n      ]\n    }\n  ]\n}\n```",
+  "jd_extracted": "```json\n{\n  \"Position\": \"Application Testing Engineer\",\n  \"Experience_Required_Years\": \"1-5\",\n  \"Must_Have_Skills\": [\n    \"Manual testing\",\n    \"Automation testing\",\n    \"SDLC\",\n    \"STLC\",\n    \"Defect life cycle\",\n    \"Selenium\",\n    \"JIRA\",\n    \"Postman\",\n    \"SQL queries\"\n  ],\n  \"Nice_To_Have_Skills\": [\n    \"ISTQB Certification or equivalent\",\n    \"Agile/Scrum methodology\",\n    \"CI/CD pipelines (e.g., Jenkins)\"\n  ],\n  \"Education\": \"\",\n  \"Responsibilities\": [\n    \"Perform functional, regression, integration, and UAT testing for applications\",\n    \"Create and execute detailed test cases, test plans, and scripts\",\n    \"Identify, track, and report defects using tools like JIRA or Bugzilla\",\n    \"Collaborate with development teams to ensure quality deliverables\",\n    \"Execute automation scripts using tools such as Selenium, TestNG, or Cypress\",\n    \"Validate APIs using tools like Postman\",\n    \"Document test results and maintain test reports\"\n  ],\n  \"Soft_Skills\": [\n    \"Problem-solving skills\",\n    \"Attention to detail\"\n  ],\n  \"Location\": \"Bangalore, India (Hybrid)\",\n  \"Industry\": \"Software Testing/Quality Assurance\"\n}\n```"
+}

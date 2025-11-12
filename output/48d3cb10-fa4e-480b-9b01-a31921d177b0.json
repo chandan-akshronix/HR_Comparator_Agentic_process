@@ -1,0 +1,84 @@
+{
+  "fit_category": "Partial Fit",
+  "total_score": 83,
+  "parameter_breakdown": {
+    "Skill_Score": 33,
+    "Experience_Score": 23,
+    "Project_Score": 12,
+    "Education_Score": 10,
+    "Soft_Skill_Score": 5,
+    "Location_Score": 5
+  },
+  "risk_factors": [
+    "No explicit mention of soft skills in the resume",
+    "Relocation risk due to no current location mentioned",
+    "Frequent job changes (avg tenure < 1 year)"
+  ],
+  "growth_signals": [
+    "ISTQB certification indicates commitment to professional development",
+    "Experience with Agile/Scrum methodology and CI/CD pipelines shows adaptability to modern workflows",
+    "Consistent career progression with relevant roles and responsibilities",
+    "Experience in both web and mobile application testing demonstrates versatility"
+  ],
+  "recruiter_confidence": "Medium",
+  "selection_reason": "Ankit Verma is a strong candidate for the Application Testing Engineer role. He meets all the technical skill requirements, including manual and automation testing, Selenium, JIRA, Postman, and SQL queries. His experience aligns well with the job description, as he has 3 years of relevant experience in application testing, including functional, regression, and API testing. His ISTQB certification adds credibility to his testing expertise, and his familiarity with Agile/Scrum and CI/CD pipelines is a bonus. While the lack of explicitly stated soft skills and current location introduces minor risks, his overall profile demonstrates strong technical competence, relevant experience, and growth potential. The recruiter is confident in his ability to perform well in this role.",
+  "resume_id": "48d3cb10-fa4e-480b-9b01-a31921d177b0",
+  "applicant_name": "Ankit Verma",
+  "applicant_email": "ankit.verma@gmail.com",
+  "applicant_mobile": "+91-9876123456",
+  "skill_score": 33,
+  "experience_score": 23,
+  "stability_score": 30,
+  "full_resume_data": {
+    "Name": "Ankit Verma",
+    "Email": "ankit.verma@gmail.com",
+    "Mobile": "+91-9876123456",
+    "Total_Experience_Years": "3",
+    "Technical_Skills": [
+      "Manual Testing",
+      "Automation Testing",
+      "Selenium",
+      "TestNG",
+      "API Testing",
+      "Postman",
+      "SQL Queries",
+      "Agile/Scrum Methodology",
+      "Defect Tracking (JIRA, Bugzilla)",
+      "CI/CD (Jenkins)"
+    ],
+    "Soft_Skills": [],
+    "Education": "",
+    "Projects": [],
+    "Certifications": [
+      "ISTQB Certified Tester \u2013 Foundation Level"
+    ],
+    "Domain_Experience": "Web and Mobile Application Testing",
+    "Current_Location": "",
+    "Career_History": [
+      {
+        "Job_Title": "Application Tester",
+        "Company": "ABC Tech",
+        "Start_Date": "Jan 2022",
+        "End_Date": "Present",
+        "Responsibilities": [
+          "Designed and executed test cases for web and mobile apps.",
+          "Automated regression test cases using Selenium WebDriver.",
+          "Validated APIs using Postman and automated test scripts.",
+          "Worked closely with developers to resolve defects in Agile sprints."
+        ]
+      },
+      {
+        "Job_Title": "QA Analyst",
+        "Company": "PQR Solutions",
+        "Start_Date": "Jan 2021",
+        "End_Date": "Dec 2021",
+        "Responsibilities": [
+          "Conducted functional and regression testing on enterprise apps.",
+          "Prepared test plans and detailed bug reports."
+        ]
+      }
+    ]
+  },
+  "resume_extracted": "```json\n{\n  \"Name\": \"Ankit Verma\",\n  \"Email\": \"ankit.verma@gmail.com\",\n  \"Mobile\": \"+91-9876123456\",\n  \"Total_Experience_Years\": \"3\",\n  \"Technical_Skills\": [\n    \"Manual Testing\",\n    \"Automation Testing\",\n    \"Selenium\",\n    \"TestNG\",\n    \"API Testing\",\n    \"Postman\",\n    \"SQL Queries\",\n    \"Agile/Scrum Methodology\",\n    \"Defect Tracking (JIRA, Bugzilla)\",\n    \"CI/CD (Jenkins)\"\n  ],\n  \"Soft_Skills\": [],\n  \"Education\": \"\",\n  \"Projects\": [],\n  \"Certifications\": [\n    \"ISTQB Certified Tester \u2013 Foundation Level\"\n  ],\n  \"Domain_Experience\": \"Web and Mobile Application Testing\",\n  \"Current_Location\": \"\",\n  \"Career_History\": [\n    {\n      \"Job_Title\": \"Application Tester\",\n      \"Company\": \"ABC Tech\",\n      \"Start_Date\": \"Jan 2022\",\n      \"End_Date\": \"Present\",\n      \"Responsibilities\": [\n        \"Designed and executed test cases for web and mobile apps.\",\n        \"Automated regression test cases using Selenium WebDriver.\",\n        \"Validated APIs using Postman and automated test scripts.\",\n        \"Worked closely with developers to resolve defects in Agile sprints.\"\n      ]\n    },\n    {\n      \"Job_Title\": \"QA Analyst\",\n      \"Company\": \"PQR Solutions\",\n      \"Start_Date\": \"Jan 2021\",\n      \"End_Date\": \"Dec 2021\",\n      \"Responsibilities\": [\n        \"Conducted functional and regression testing on enterprise apps.\",\n        \"Prepared test plans and detailed bug reports.\"\n      ]\n    }\n  ]\n}\n```",
+  "jd_extracted": "```json\n{\n  \"Position\": \"Application Testing Engineer\",\n  \"Experience_Required_Years\": \"1-5\",\n  \"Must_Have_Skills\": [\n    \"Manual testing\",\n    \"Automation testing\",\n    \"SDLC\",\n    \"STLC\",\n    \"Defect life cycle\",\n    \"Selenium\",\n    \"JIRA\",\n    \"Postman\",\n    \"SQL queries\"\n  ],\n  \"Nice_To_Have_Skills\": [\n    \"ISTQB Certification\",\n    \"Agile/Scrum methodology\",\n    \"CI/CD pipelines (e.g., Jenkins)\"\n  ],\n  \"Education\": \"\",\n  \"Responsibilities\": [\n    \"Perform functional, regression, integration, and UAT testing for applications\",\n    \"Create and execute detailed test cases, test plans, and scripts\",\n    \"Identify, track, and report defects using tools like JIRA or Bugzilla\",\n    \"Collaborate with development teams to ensure quality deliverables\",\n    \"Execute automation scripts using tools such as Selenium, TestNG, or Cypress\",\n    \"Validate APIs using tools like Postman\",\n    \"Document test results and maintain test reports\"\n  ],\n  \"Soft_Skills\": [\n    \"Problem-solving skills\",\n    \"Attention to detail\"\n  ],\n  \"Location\": \"Bangalore, India (Hybrid)\",\n  \"Industry\": \"Software Quality Assurance\"\n}\n```"
+}

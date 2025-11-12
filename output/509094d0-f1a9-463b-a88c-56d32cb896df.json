@@ -1,0 +1,27 @@
+{
+  "fit_category": "Best Fit",
+  "total_score": 96,
+  "parameter_breakdown": {
+    "Skill_Score": 35,
+    "Experience_Score": 23,
+    "Project_Score": 13,
+    "Education_Score": 10,
+    "Soft_Skill_Score": 8,
+    "Location_Score": 2
+  },
+  "risk_factors": [
+    "None significant. Stable career progression and skills align with job requirements."
+  ],
+  "growth_signals": [
+    "ISTQB Advanced Level Certification",
+    "Agile Testing Certification",
+    "Leadership experience managing QA team",
+    "Experience with CI/CD pipelines and automation frameworks",
+    "Proven ability to adapt to new tools and methodologies"
+  ],
+  "recruiter_confidence": "High",
+  "selection_reason": "Neha Reddy is a strong match for the Application Testing Engineer role. She possesses all the required technical skills, including manual and automation testing, Selenium, JIRA, Postman, and SQL queries. Her certifications (ISTQB Advanced Level and Agile Testing) and experience with Agile/Scrum and CI/CD pipelines align well with the 'Nice to Have' skills. With 5 years of relevant experience, she has demonstrated leadership, problem-solving, and adaptability through her roles, particularly as a Senior QA Engineer. There are no significant risks, and her certifications and leadership experience indicate a strong potential for growth. While her current location is unspecified, the hybrid nature of the role minimizes this concern. Overall, she is a highly competent and reliable candidate with excellent growth potential.",
+  "resume_id": "509094d0-f1a9-463b-a88c-56d32cb896df",
+  "resume_extracted": "```json\n{\n  \"Name\": \"Neha Reddy\",\n  \"Email\": \"neha.reddy@gmail.com\",\n  \"Mobile\": \"+91-9876012345\",\n  \"Total_Experience_Years\": \"5\",\n  \"Technical_Skills\": [\n    \"Test Automation (Selenium, Cypress, TestNG)\",\n    \"Manual Testing (UAT, Regression, Integration)\",\n    \"API Testing (Postman, RestAssured)\",\n    \"SQL & Database Testing\",\n    \"Agile/Scrum\",\n    \"CI/CD (Jenkins, Git)\"\n  ],\n  \"Soft_Skills\": [\n    \"Team Leadership\",\n    \"Test Strategy Planning\"\n  ],\n  \"Education\": \"\",\n  \"Projects\": [],\n  \"Certifications\": [\n    \"ISTQB Advanced Level \u2013 Test Analyst\",\n    \"Agile Testing Certification\"\n  ],\n  \"Domain_Experience\": \"Application Testing, Financial Applications\",\n  \"Current_Location\": \"\",\n  \"Career_History\": [\n    {\n      \"Job_Title\": \"Senior QA Engineer\",\n      \"Company\": \"DEF Technologies\",\n      \"Start_Date\": \"Feb 2021\",\n      \"End_Date\": \"Present\",\n      \"Responsibilities\": [\n        \"Led QA team of 4 testers for enterprise web applications.\",\n        \"Built automation frameworks using Selenium and TestNG.\",\n        \"Performed API testing and integrated test cases into CI/CD pipelines.\",\n        \"Prepared test strategy documents and presented QA reports to stakeholders.\"\n      ]\n    },\n    {\n      \"Job_Title\": \"QA Engineer\",\n      \"Company\": \"LMN Systems\",\n      \"Start_Date\": \"Jan 2019\",\n      \"End_Date\": \"Jan 2021\",\n      \"Responsibilities\": [\n        \"Developed and executed test plans for financial applications.\",\n        \"Conducted database validations using SQL queries.\"\n      ]\n    }\n  ]\n}\n```",
+  "jd_extracted": "```json\n{\n  \"Position\": \"Application Testing Engineer\",\n  \"Experience_Required_Years\": \"1\u20135\",\n  \"Must_Have_Skills\": [\n    \"Manual testing\",\n    \"Automation testing\",\n    \"SDLC\",\n    \"STLC\",\n    \"Defect life cycle\",\n    \"Selenium\",\n    \"JIRA\",\n    \"Postman\",\n    \"SQL queries\"\n  ],\n  \"Nice_To_Have_Skills\": [\n    \"ISTQB Certification\",\n    \"Agile/Scrum methodology\",\n    \"CI/CD pipelines (e.g., Jenkins)\"\n  ],\n  \"Education\": \"\",\n  \"Responsibilities\": [\n    \"Perform functional, regression, integration, and UAT testing for applications\",\n    \"Create and execute detailed test cases, test plans, and scripts\",\n    \"Identify, track, and report defects using tools like JIRA or Bugzilla\",\n    \"Collaborate with development teams to ensure quality deliverables\",\n    \"Execute automation scripts using tools such as Selenium, TestNG, or Cypress\",\n    \"Validate APIs using tools like Postman\",\n    \"Document test results and maintain test reports\"\n  ],\n  \"Soft_Skills\": [\n    \"Problem-solving skills\",\n    \"Attention to detail\"\n  ],\n  \"Location\": \"Bangalore, India (Hybrid)\",\n  \"Industry\": \"Software Testing/Quality Assurance\"\n}\n```"
+}
