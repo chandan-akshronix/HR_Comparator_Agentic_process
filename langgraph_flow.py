@@ -13,8 +13,54 @@ logging.info("✅ Azure OpenAI LLM initialized for LangGraph pipeline.")
 # ==========================================
 # PROMPTS
 # ==========================================
-# Note: JD_PROMPT and RESUME_PROMPT removed (extraction done during upload)
-# Only Comparator prompt needed for matching
+
+JD_PROMPT = """You are a senior HR specialist. Extract **structured, factual** details from this Job Description.
+
+Job Description:
+{jd_text}
+
+Return clean JSON:
+{{
+  "Position": "",
+  "Experience_Required_Years": "",
+  "Must_Have_Skills": [],
+  "Nice_To_Have_Skills": [],
+  "Education": "",
+  "Responsibilities": [],
+  "Soft_Skills": [],
+  "Location": "",
+  "Industry": ""
+}}
+"""
+
+RESUME_PROMPT = """You are a professional recruiter. Parse and extract **key structured details** from this resume.
+
+Resume Text:
+{resume_text}
+
+Return clean JSON:
+{{
+  "Name": "",
+  "Email": "",
+  "Mobile": "",
+  "Total_Experience_Years": "",
+  "Technical_Skills": [],
+  "Soft_Skills": [],
+  "Education": "",
+  "Projects": [],
+  "Certifications": [],
+  "Domain_Experience": "",
+  "Current_Location": "",
+  "Career_History": [
+      {{
+        "Company": "",
+        "Job_Title": "",
+        "Start_Date": "",
+        "End_Date": ""
+      }}
+  ]
+}}
+"""
 
 COMPARATOR_PROMPT = """You are an experienced recruiter evaluating a candidate for hiring.
 
@@ -82,10 +128,48 @@ Be consistent, balanced, and think like a human recruiter minimizing hiring risk
 """
 
 # ==========================================
-# LLM Node - Comparator Only
+# LLM Nodes
 # ==========================================
-# Note: jd_extractor_node and resume_extractor_node REMOVED
-# Extraction now happens during upload and is stored in MongoDB
+
+def jd_extractor_node(state: dict) -> dict:
+    """Extracts structured JD info using LLM."""
+    logging.info("🧩 JD Extractor node running...")
+    jd_text = state.get("jd_text", "")
+
+    if not jd_text:
+        logging.warning("⚠️ JD text missing in state.")
+        state["jd_extracted"] = "{}"
+        return state
+
+    try:
+        response = llm.invoke(JD_PROMPT.format(jd_text=jd_text))
+        state["jd_extracted"] = response.content
+        logging.info("✅ JD extraction completed.")
+    except Exception as e:
+        logging.error(f"❌ JD extractor error: {e}")
+        state["jd_extracted"] = "{}"
+    return state
+
+
+def resume_extractor_node(state: dict) -> dict:
+    """Extracts structured Resume info using LLM."""
+    logging.info("🧾 Resume Extractor node running...")
+    resume_text = state.get("resume_text", "")
+
+    if not resume_text:
+        logging.warning("⚠️ Resume text missing in state.")
+        state["resume_extracted"] = "{}"
+        return state
+
+    try:
+        response = llm.invoke(RESUME_PROMPT.format(resume_text=resume_text))
+        state["resume_extracted"] = response.content
+        logging.info("✅ Resume extraction completed.")
+    except Exception as e:
+        logging.error(f"❌ Resume extractor error: {e}")
+        state["resume_extracted"] = "{}"
+    return state
+
 
 def comparator_node(state: dict) -> dict:
     """Compares JD and Resume using LLM with recruiter-style reasoning."""
@@ -112,34 +196,25 @@ def comparator_node(state: dict) -> dict:
     return state
 
 # ==========================================
-# LangGraph Builder - OPTIMIZED (Comparator Only)
+# LangGraph Builder
 # ==========================================
 
 def build_langgraph():
     """
-    OPTIMIZED: Only runs Comparator agent
-    
-    Uses pre-extracted JD and Resume data from MongoDB.
-    - No JD_Extractor agent (data fetched from JobDescription collection)
-    - No Resume_Extractor agent (data fetched from resume collection)
-    - Only Comparator agent (1 Azure OpenAI call)
-    
-    Benefits:
-    - 67% cost savings (1 API call instead of 3)
-    - 2-3x faster processing
-    - More reliable (uses validated extracted data)
-    
-    Input: Pre-extracted jd_extracted and resume_extracted from MongoDB
-    Output: Comparison result with match_score and fit_category
+    Builds the full recruiter workflow graph:
+    JD → Resume → Comparator
     """
     g = StateGraph(dict)
-    
-    # Only add Comparator node (extraction agents removed)
+
+    g.add_node("JD_Extractor", jd_extractor_node)
+    g.add_node("Resume_Extractor", resume_extractor_node)
     g.add_node("Comparator", comparator_node)
-    
-    # Direct entry and exit (no extraction steps)
-    g.set_entry_point("Comparator")
+
+    g.add_edge("JD_Extractor", "Resume_Extractor")
+    g.add_edge("Resume_Extractor", "Comparator")
+
+    g.set_entry_point("JD_Extractor")
     g.set_finish_point("Comparator")
-    
-    logging.info("✅ LangGraph OPTIMIZED pipeline ready (Comparator only - 67% cost savings).")
+
+    logging.info("✅ LangGraph recruiter pipeline ready (JD → Resume → Comparator).")
     return g
