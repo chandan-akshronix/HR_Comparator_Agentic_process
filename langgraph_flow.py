@@ -133,6 +133,11 @@ Be consistent, balanced, and think like a human recruiter minimizing hiring risk
 
 def jd_extractor_node(state: dict) -> dict:
     """Extracts structured JD info using LLM."""
+    # Skip if already extracted (for optimization)
+    if state.get("jd_extracted"):
+        logging.info("⏭️ JD already extracted, skipping...")
+        return state
+    
     logging.info("🧩 JD Extractor node running...")
     jd_text = state.get("jd_text", "")
 
@@ -153,6 +158,11 @@ def jd_extractor_node(state: dict) -> dict:
 
 def resume_extractor_node(state: dict) -> dict:
     """Extracts structured Resume info using LLM."""
+    # Skip if already extracted (for optimization)
+    if state.get("resume_extracted"):
+        logging.info("⏭️ Resume already extracted, skipping...")
+        return state
+        
     logging.info("🧾 Resume Extractor node running...")
     resume_text = state.get("resume_text", "")
 
@@ -201,20 +211,28 @@ def comparator_node(state: dict) -> dict:
 
 def build_langgraph():
     """
-    Builds the full recruiter workflow graph:
-    JD → Resume → Comparator
+    Builds a flexible recruiter workflow graph with 3 agents:
+    JD_Extractor → Resume_Extractor → Comparator
+    
+    Each node auto-skips if data already exists, enabling:
+    - Full pipeline: Pass jd_text + resume_text (runs all 3)
+    - Optimized pipeline: Pass jd_extracted + resume_extracted (skips to Comparator)
+    - JD extraction only: Pass jd_text only (runs JD_Extractor, skips rest)
+    - Resume extraction only: Pass resume_text only (runs Resume_Extractor, skips rest)
     """
     g = StateGraph(dict)
 
+    # Add all 3 agent nodes
     g.add_node("JD_Extractor", jd_extractor_node)
     g.add_node("Resume_Extractor", resume_extractor_node)
     g.add_node("Comparator", comparator_node)
 
+    # Sequential edges (nodes auto-skip if data exists)
     g.add_edge("JD_Extractor", "Resume_Extractor")
     g.add_edge("Resume_Extractor", "Comparator")
 
     g.set_entry_point("JD_Extractor")
     g.set_finish_point("Comparator")
 
-    logging.info("✅ LangGraph recruiter pipeline ready (JD → Resume → Comparator).")
+    logging.info("✅ LangGraph flexible pipeline ready (JD → Resume → Comparator with auto-skip).")
     return g
