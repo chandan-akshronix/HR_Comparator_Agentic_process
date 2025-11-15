@@ -21,8 +21,9 @@ logging.basicConfig(level=logging.INFO)
 # Stability Score
 # ============================================================
 def compute_stability_score(career_history):
-    if not career_history or not isinstance(career_history, list):
-        return 50, ["Career history incomplete or missing"]
+    # If no career history or empty list, stability cannot be judged - return 0
+    if not career_history or not isinstance(career_history, list) or len(career_history) == 0:
+        return 0, ["No professional experience - stability cannot be assessed"]
     total_duration = 0
     job_count = 0
     gap_penalty = 0
@@ -41,8 +42,9 @@ def compute_stability_score(career_history):
             job_count += 1
         except Exception:
             continue
+    # If no valid jobs parsed, stability cannot be judged - return 0
     if job_count == 0:
-        return 50, ["Career data not parseable"]
+        return 0, ["No valid professional experience found - stability cannot be assessed"]
     parsed_jobs.sort(key=lambda x: x[0])
     for i in range(1, len(parsed_jobs)):
         prev_end = parsed_jobs[i - 1][1]

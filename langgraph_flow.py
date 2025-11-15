@@ -60,6 +60,11 @@ Return clean JSON:
       }}
   ]
 }}
+
+**IMPORTANT:** 
+- Career_History MUST be ordered chronologically with the **MOST RECENT position FIRST** (reverse chronological order).
+- The first entry in Career_History should be the candidate's current/latest job.
+- For current positions, use "Present" or "Current" for End_Date if not specified.
 """
 
 COMPARATOR_PROMPT = """You are an experienced recruiter evaluating a candidate for hiring.
@@ -77,13 +82,21 @@ Resume:
 Evaluate using 3 recruiter mind layers:
 
 ### 1. FIT & COMPETENCE (Can they do the job?)
-Use weighted scoring:
-- Technical Skills (35%)
-- Experience Relevance (25%)
-- Project/Domain Alignment (15%)
-- Education & Certifications (10%)
-- Soft Skills (10%)
-- Location / Availability (5%)
+Calculate individual scores (0-100) for each parameter, then compute total_score using the weighted formula below.
+
+- Technical Skills Score (0-100) - Match between required and candidate skills
+- Experience Relevance Score (0-100) - How well experience aligns with requirements
+- Project/Domain Alignment Score (0-100) - Relevance of projects and domain expertise
+- Education & Certifications Score (0-100) - Match of education and certifications
+- Soft Skills Score (0-100) - Alignment of soft skills with job requirements
+- Location / Availability Score (0-100) - Location match and availability
+- Stability Score (0-100) - **IMPORTANT:** If candidate has NO professional experience (no Career_History entries or empty Career_History), Stability Score MUST be 0. For candidates with experience: Lower score for frequent job changes, higher for stable career (longer tenure, fewer gaps).
+- Overqualified Score (0-100) - Calculate based on: i) extra relevant experience beyond requirements, or ii) equal/more relevant experience with highly valuable additional skills. If candidate doesn't meet either criteria, score should be 0.
+
+**Total Score Formula (calculate after individual scores):**
+total_score = (Technical_Skills_Score × 0.30) + (Experience_Relevance_Score × 0.20) + (Project_Domain_Alignment_Score × 0.15) + (Education_Certifications_Score × 0.10) + (Soft_Skills_Score × 0.05) + (Location_Availability_Score × 0.05) + (Stability_Score × 0.05) + (Overqualified_Score × 0.10)
+
+Note: Apply risk penalties and growth bonuses AFTER calculating base total_score.
 
 ### 2. RISK & RELIABILITY (Should I trust this hire?)
 Look for potential risks:
@@ -110,14 +123,16 @@ Add bonus points (+2 to +10) for:
 
 {{
   "fit_category": "Best Fit / Partial Fit / Not Fit",
-  "total_score": 0-100,
+  "total_score": <calculated number 0-100 using the weighted formula above>,
   "parameter_breakdown": {{
     "Skill_Score": "",
     "Experience_Score": "",
     "Project_Score": "",
     "Education_Score": "",
     "Soft_Skill_Score": "",
-    "Location_Score": ""
+    "Location_Score": "",
+    "Stability_Score": "",
+    "Overqualified_Score": ""
   }},
   "risk_factors": ["..."],
   "growth_signals": ["..."],

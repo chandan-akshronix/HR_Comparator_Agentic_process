@@ -48,6 +48,7 @@ app.add_middleware(
 # ============================================
 class BatchComparisonRequest(BaseModel):
     workflow_id: str
+    jd_id: str  # Added jd_id for saving results
     jd_text: str
     resumes: List[Dict[str, str]]  # [{resume_id, resume_text}, ...]
 
@@ -61,7 +62,9 @@ def process_single_resume_sequential(
     app_graph,
     parser: JsonOutputParser,
     idx: int,
-    total: int
+    total: int,
+    workflow_id: str = None,
+    jd_id: str = None
 ) -> dict:
     """
     Process a single resume through full 3-agent pipeline
@@ -144,6 +147,66 @@ def process_single_resume_sequential(
         resume_time = time.time() - resume_start
         logging.info(f"✅ [{idx}/{total}] Completed: {resume_id} - Score={result['match_score']}, Fit={result['fit_category']} ({resume_time:.1f}s)")
         
+        # Save result immediately to database for live updates
+        if workflow_id and jd_id:
+            try:
+                from bson import ObjectId
+                from datetime import datetime
+                
+                # Delete existing result if any
+                existing = db["resume_result"].find_one({
+                    "resume_id": ObjectId(resume_id) if isinstance(resume_id, str) and len(resume_id) == 24 else resume_id,
+                    "jd_id": jd_id
+                })
+                if existing:
+                    db["resume_result"].delete_one({"_id": existing["_id"]})
+                
+                # Insert new result
+                result_doc = {
+                    "resume_id": ObjectId(resume_id) if isinstance(resume_id, str) and len(resume_id) == 24 else resume_id,
+                    "jd_id": jd_id,
+                    "workflow_id": workflow_id,
+                    "match_score": result.get("match_score", 0),
+                    "fit_category": result.get("fit_category", "Unknown"),
+                    "jd_extracted": result.get("jd_extracted", {}),
+                    "resume_extracted": result.get("resume_extracted", {}),
+                    "match_breakdown": result.get("match_breakdown", {}),
+                    "selection_reason": result.get("selection_reason", ""),
+                    "agent_version": "v1.0.0",
+                    "confidence_score": result.get("confidence_score", "Unknown"),
+                    "timestamp": datetime.utcnow()
+                }
+                db["resume_result"].insert_one(result_doc)
+                
+                # Update workflow metrics incrementally
+                current_matches = list(db["resume_result"].find({
+                    "workflow_id": workflow_id,
+                    "jd_id": jd_id
+                }))
+                high_matches_count = len([m for m in current_matches if m.get("match_score", 0) >= 80])
+                
+                # Update workflow execution document
+                db["workflow_executions"].update_one(
+                    {"workflow_id": workflow_id},
+                    {
+                        "$set": {
+                            "metrics.candidates_scored": len(current_matches),
+                            "metrics.high_matches": high_matches_count,
+                            "metrics.best_fit": high_matches_count,
+                            "metrics.partial_fit": len([m for m in current_matches if 50 <= m.get("match_score", 0) < 80]),
+                            "metrics.not_fit": len([m for m in current_matches if m.get("match_score", 0) < 50]),
+                            "progress.processed_count": len(current_matches),
+                            "progress.percentage": int((len(current_matches) / total) * 100) if total > 0 else 0
+                        }
+                    }
+                )
+                
+                logging.info(f"💾 [{idx}/{total}] Saved result to database for live updates - {len(current_matches)}/{total} processed")
+            except Exception as save_error:
+                logging.warning(f"⚠️ Failed to save result for live update: {save_error}")
+                import traceback
+                traceback.print_exc()
+        
         return result
         
     except Exception as e:
@@ -204,7 +267,9 @@ async def compare_batch(request: BatchComparisonRequest):
                     app_graph,
                     parser,
                     idx + 1,
-                    total_resumes
+                    total_resumes,
+                    request.workflow_id,
+                    request.jd_id
                 )
                 for idx, resume in enumerate(request.resumes)
             ]
