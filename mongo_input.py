@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 MONGODB_URL = os.getenv("MONGODB_URL")
-DATABASE_NAME = os.getenv("DATABASE_NAME", "hr_resume_comparator")
+DATABASE_NAME = os.getenv("DATABASE_NAME", "pod_1")
 
 def get_client():
     return MongoClient(MONGODB_URL)

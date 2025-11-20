@@ -22,7 +22,7 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 
 MONGODB_URL = os.getenv("MONGODB_URL")
-DATABASE_NAME = os.getenv("DATABASE_NAME", "hr_resume_comparator")
+DATABASE_NAME = os.getenv("DATABASE_NAME", "pod_1")
 
 client = MongoClient(MONGODB_URL)
 db = client[DATABASE_NAME]
