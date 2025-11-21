@@ -30,7 +30,7 @@ ENV PATH="/venv/bin:$PATH"
 
 EXPOSE 9000
 
-HEALTHCHECK --interval=30s --timeout=20s --start-period=120s --retries=15 \
+HEALTHCHECK --interval=30s --timeout=20s --start-period=120s --retries=3 \
     CMD wget --spider --quiet http://localhost:9000/ || exit 1
 
 CMD ["uvicorn", "backend_api:app", "--host", "0.0.0.0", "--port", "9000"]
