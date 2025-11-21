@@ -9,8 +9,33 @@ load_dotenv()
 MONGODB_URL = os.getenv("MONGODB_URL")
 DATABASE_NAME = os.getenv("DATABASE_NAME", "pod_1")
 
+# Connection options for MongoDB Atlas
+def get_connection_options():
+    if not MONGODB_URL:
+        return {}
+    if "mongodb+srv://" in MONGODB_URL:
+        # SRV connections automatically use TLS
+        return {
+            "serverSelectionTimeoutMS": 30000,
+            "connectTimeoutMS": 20000,
+            "socketTimeoutMS": 20000,
+            "retryWrites": True,
+        }
+    elif "mongodb://" in MONGODB_URL and "mongodb.net" in MONGODB_URL:
+        # Standard Atlas connections need explicit TLS
+        return {
+            "tls": True,
+            "tlsAllowInvalidCertificates": False,
+            "tlsCAFile": None,  # Use system CA certificates
+            "serverSelectionTimeoutMS": 30000,
+            "connectTimeoutMS": 20000,
+            "socketTimeoutMS": 20000,
+            "retryWrites": True,
+        }
+    return {}
+
 def store_to_mongo(result, resume_id):
-    client = MongoClient(MONGODB_URL)
+    client = MongoClient(MONGODB_URL, **get_connection_options())
     db = client[DATABASE_NAME]
     collection = db["resume_result"]
     collection.update_one({"resume_id": resume_id}, {"$set": result}, upsert=True)

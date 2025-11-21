@@ -24,21 +24,53 @@ logging.basicConfig(level=logging.INFO)
 MONGODB_URL = os.getenv("MONGODB_URL")
 DATABASE_NAME = os.getenv("DATABASE_NAME", "pod_1")
 
-client = MongoClient(MONGODB_URL)
+
+def resolve_cors_origins() -> tuple[List[str], bool]:
+    """
+    Returns a tuple of (origins, allow_credentials) based on CORS_ORIGINS env.
+    If no origins are provided, fall back to wildcard origins without credentials.
+    """
+    raw_origins = os.getenv("CORS_ORIGINS", "")
+    parsed_origins = [origin.strip() for origin in raw_origins.split(",") if origin.strip()]
+    if parsed_origins:
+        return parsed_origins, True
+    return ["*"], False
+
+# Connection options for MongoDB Atlas
+def get_connection_options():
+    if not MONGODB_URL:
+        return {}
+    if "mongodb+srv://" in MONGODB_URL:
+        # SRV connections automatically use TLS
+        return {
+            "serverSelectionTimeoutMS": 30000,
+            "connectTimeoutMS": 20000,
+            "socketTimeoutMS": 20000,
+            "retryWrites": True,
+        }
+    elif "mongodb://" in MONGODB_URL and "mongodb.net" in MONGODB_URL:
+        # Standard Atlas connections need explicit TLS
+        return {
+            "tls": True,
+            "tlsAllowInvalidCertificates": False,
+            "tlsCAFile": None,  # Use system CA certificates
+            "serverSelectionTimeoutMS": 30000,
+            "connectTimeoutMS": 20000,
+            "socketTimeoutMS": 20000,
+            "retryWrites": True,
+        }
+    return {}
+
+client = MongoClient(MONGODB_URL, **get_connection_options())
 db = client[DATABASE_NAME]
 
 app = FastAPI(title="AI Resume–JD Matching Backend")
 
-origins = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "http://localhost:5173",  # Vite frontend
-    "http://localhost:8000"   # Main backend
-]
+cors_origins, allow_credentials = resolve_cors_origins()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
+    allow_origins=cors_origins,
+    allow_credentials=allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
 )

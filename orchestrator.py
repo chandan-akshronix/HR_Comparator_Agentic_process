@@ -16,6 +16,31 @@ from langgraph_flow import build_langgraph
 load_dotenv()
 logging.basicConfig(level=logging.INFO)
 
+# Connection options for MongoDB Atlas
+def get_mongo_connection_options(mongo_uri):
+    if not mongo_uri:
+        return {}
+    if "mongodb+srv://" in mongo_uri:
+        # SRV connections automatically use TLS
+        return {
+            "serverSelectionTimeoutMS": 30000,
+            "connectTimeoutMS": 20000,
+            "socketTimeoutMS": 20000,
+            "retryWrites": True,
+        }
+    elif "mongodb://" in mongo_uri and "mongodb.net" in mongo_uri:
+        # Standard Atlas connections need explicit TLS
+        return {
+            "tls": True,
+            "tlsAllowInvalidCertificates": False,
+            "tlsCAFile": None,  # Use system CA certificates
+            "serverSelectionTimeoutMS": 30000,
+            "connectTimeoutMS": 20000,
+            "socketTimeoutMS": 20000,
+            "retryWrites": True,
+        }
+    return {}
+
 
 # ============================================================
 # Stability Score
@@ -109,7 +134,8 @@ def main_workflow(workflow_id=None):
         logging.error("❌ Workflow ID not provided.")
         return
 
-    client = MongoClient(os.getenv("MONGO_URI"))
+    mongo_uri = os.getenv("MONGO_URI")
+    client = MongoClient(mongo_uri, **get_mongo_connection_options(mongo_uri))
     wf_db = client["hr_resume_comparator"]
     wf_collection = wf_db["hr_resume_comparator.workflow_executions"]
 
@@ -140,7 +166,8 @@ def main_workflow(workflow_id=None):
     graph = build_langgraph()
     app = graph.compile()
 
-    result_client = MongoClient(os.getenv("MONGO_URI"))
+    mongo_uri = os.getenv("MONGO_URI")
+    result_client = MongoClient(mongo_uri, **get_mongo_connection_options(mongo_uri))
     result_collection = result_client["resume_selector"]["selected_resumes"]
 
     for resume_oid in resume_ids:
