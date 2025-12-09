@@ -2,11 +2,11 @@ pipeline {
     agent any
     
     environment {
-        ACR_NAME = 'REPLACE_WITH_ACR_NAME' // Will be output from Terraform
-        ACR_LOGIN_SERVER = '${ACR_NAME}.azurecr.io'
+        ACR_NAME = 'hracrregistry' // Will be output from Terraform
+        ACR_LOGIN_SERVER = 'hracrregistry.azurecr.io'
         IMAGE_NAME = 'hr-ai-agent'
         IMAGE_TAG = "${env.BUILD_NUMBER}"
-        SONARQUBE_SERVER = 'SonarQube'
+        SONARQUBE_SERVER = 'http://4.213.4.181:9000'
     }
     
     stages {
