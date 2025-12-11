@@ -21,7 +21,7 @@ spec:
         image: hracrregistry.azurecr.io/hr-ai-agent:v1
         imagePullPolicy: Always
         ports:
-        - containerPort: 8001
+        - containerPort: 9000
         env:
         - name: MONGODB_URL
           valueFrom:
@@ -63,14 +63,14 @@ spec:
         livenessProbe:
           httpGet:
             path: /health
-            port: 8001
+            port: 9000
           initialDelaySeconds: 60
           periodSeconds: 30
           timeoutSeconds: 10
         readinessProbe:
           httpGet:
             path: /health
-            port: 8001
+            port: 9000
           initialDelaySeconds: 30
           periodSeconds: 10
           timeoutSeconds: 5
@@ -89,5 +89,5 @@ spec:
     app: hr-ai-agent
   ports:
     - protocol: TCP
-      port: 8001
-      targetPort: 8001
+      port: 9000
+      targetPort: 9000
