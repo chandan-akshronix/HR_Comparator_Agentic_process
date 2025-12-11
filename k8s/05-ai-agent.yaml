@@ -15,9 +15,10 @@ spec:
       labels:
         app: hr-ai-agent
     spec:
+      automountServiceAccountToken: false
       containers:
       - name: hr-ai-agent
-        image: hracrregistry.azurecr.io/hr-ai-agent:latest
+        image: hracrregistry.azurecr.io/hr-ai-agent:v1
         imagePullPolicy: Always
         ports:
         - containerPort: 8001
