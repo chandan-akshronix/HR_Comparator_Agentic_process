@@ -4,7 +4,7 @@ pipeline {
     environment {
         ACR_NAME = 'hracrregistry'
         ACR_LOGIN_SERVER = 'hracrregistry.azurecr.io'
-        IMAGE_NAME = 'backend-api'
+        IMAGE_NAME = 'hr-ai-agent'
         IMAGE_TAG = "${env.BUILD_NUMBER}"
     }
     
@@ -26,8 +26,8 @@ pipeline {
                     withSonarQubeEnv('sonar-scanner') {
                         sh """
                             ${scannerHome}/bin/sonar-scanner \
-                              -Dsonar.projectKey=hr-backend-api \
-                              -Dsonar.projectName='HR Backend API' \
+                              -Dsonar.projectKey=hr-ai-agent \
+                              -Dsonar.projectName='HR AI Agent' \
                               -Dsonar.sources=. \
                               -Dsonar.python.coverage.reportPaths=coverage.xml \
                               -Dsonar.exclusions=**/*.pyc,**/migrations/**,**/__pycache__/**
@@ -137,17 +137,17 @@ pipeline {
                             export KUBECONFIG=\$KUBECONFIG
                             
                             # Update image tag in manifest
-                            sed -i 's|image: ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:.*|image: ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:${IMAGE_TAG}|g' ../k8s/04-backend.yaml
+                            sed -i 's|image: ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:.*|image: ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:${IMAGE_TAG}|g' ../k8s/05-ai-agent.yaml
                             
                             # Apply the manifest (creates or updates deployment)
-                            kubectl apply -f ../k8s/04-backend.yaml
+                            kubectl apply -f ../k8s/05-ai-agent.yaml
                             
                             # Wait for rollout to complete
-                            kubectl rollout status deployment/backend-api -n hr-app --timeout=5m
+                            kubectl rollout status deployment/hr-ai-agent -n hr-app --timeout=5m
                             
                             # Verify deployment
                             echo "📋 Deployment Status:"
-                            kubectl get pods -n hr-app -l app=backend-api
+                            kubectl get pods -n hr-app -l app=hr-ai-agent
                         """
                     }
                     echo "✅ Deployment to AKS successful"
@@ -164,7 +164,7 @@ pipeline {
         success {
             echo """
             ========================================
-            ✅ Backend API Pipeline Successful!
+            ✅ AI Agent Pipeline Successful!
             ========================================
             Image: ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:${IMAGE_TAG}
             Registry: Azure Container Registry
@@ -175,7 +175,7 @@ pipeline {
         failure {
             echo """
             ========================================
-            ❌ Backend API Pipeline Failed!
+            ❌ AI Agent Pipeline Failed!
             ========================================
             Check the logs above for details
             ========================================
