@@ -6,6 +6,7 @@ pipeline {
         ACR_LOGIN_SERVER = 'hracrregistry.azurecr.io'
         IMAGE_NAME = 'hr-ai-agent'
         IMAGE_TAG = "${env.BUILD_NUMBER}"
+        SONARQUBE_SERVER = 'http://4.213.4.181:9000'
     }
     
     stages {
