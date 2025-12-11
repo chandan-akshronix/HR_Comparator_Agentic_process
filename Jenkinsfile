@@ -138,10 +138,10 @@ pipeline {
                             export KUBECONFIG=\$KUBECONFIG
                             
                             # Update image tag in manifest
-                            sed -i 's|image: ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:.*|image: ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:${IMAGE_TAG}|g' ../k8s/05-ai-agent.yaml
+                            sed -i 's|image: ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:.*|image: ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:${IMAGE_TAG}|g' ./k8s/05-ai-agent.yaml
                             
                             # Apply the manifest (creates or updates deployment)
-                            kubectl apply -f ../k8s/05-ai-agent.yaml
+                            kubectl apply -f ./k8s/05-ai-agent.yaml
                             
                             # Wait for rollout to complete
                             kubectl rollout status deployment/hr-ai-agent -n hr-app --timeout=5m
