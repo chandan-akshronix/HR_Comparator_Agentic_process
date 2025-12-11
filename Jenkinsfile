@@ -2,11 +2,10 @@ pipeline {
     agent any
     
     environment {
-        ACR_NAME = 'hracrregistry' // Will be output from Terraform
+        ACR_NAME = 'hracrregistry'
         ACR_LOGIN_SERVER = 'hracrregistry.azurecr.io'
-        IMAGE_NAME = 'hr-ai-agent'
+        IMAGE_NAME = 'backend-api'
         IMAGE_TAG = "${env.BUILD_NUMBER}"
-        SONARQUBE_SERVER = 'http://4.213.4.181:9000'
     }
     
     stages {
@@ -20,27 +19,40 @@ pipeline {
         stage('SonarQube Analysis') {
             steps {
                 script {
+                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                    echo "📊 Starting SonarQube Code Quality Analysis..."
+                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
                     def scannerHome = tool 'sonar-scanner'
                     withSonarQubeEnv('sonar-scanner') {
                         sh """
                             ${scannerHome}/bin/sonar-scanner \
-                              -Dsonar.projectKey=hr-ai-agent \
-                              -Dsonar.projectName='HR AI Agent' \
+                              -Dsonar.projectKey=hr-backend-api \
+                              -Dsonar.projectName='HR Backend API' \
                               -Dsonar.sources=. \
                               -Dsonar.python.coverage.reportPaths=coverage.xml \
-                              -Dsonar.exclusions=**/*.pyc,**/__pycache__/**
+                              -Dsonar.exclusions=**/*.pyc,**/migrations/**,**/__pycache__/**
                         """
                     }
+                    echo "✅ SonarQube analysis submitted successfully"
                 }
             }
         }
         
         stage('Quality Gate') {
             steps {
-                timeout(time: 5, unit: 'MINUTES') {
-                    waitForQualityGate abortPipeline: true
+                script {
+                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                    echo "⏳ Waiting for SonarQube Quality Gate result..."
+                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                    timeout(time: 10, unit: 'MINUTES') {
+                        def qg = waitForQualityGate()
+                        echo "📊 Quality Gate Status: ${qg.status}"
+                        if (qg.status != 'OK') {
+                            error "❌ Quality Gate failed with status: ${qg.status}"
+                        }
+                    }
+                    echo "✅ Quality Gate passed successfully"
                 }
-                echo "✅ Quality Gate passed"
             }
         }
         
@@ -65,7 +77,9 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    echo "Building Docker images..."
+                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                    echo "🐳 Building Docker images for ACR..."
+                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
                     sh """
                         docker build -t ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:${IMAGE_TAG} .
                         docker tag ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:${IMAGE_TAG} ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:latest
@@ -96,6 +110,9 @@ pipeline {
         stage('Push to Azure Container Registry') {
             steps {
                 script {
+                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                    echo "☁️ Pushing Docker image to ACR..."
+                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
                     withCredentials([usernamePassword(credentialsId: 'acr-credentials', usernameVariable: 'ACR_USERNAME', passwordVariable: 'ACR_PASSWORD')]) {
                         sh """
                             echo \$ACR_PASSWORD | docker login ${ACR_LOGIN_SERVER} -u \$ACR_USERNAME --password-stdin
@@ -103,37 +120,40 @@ pipeline {
                             docker push ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:latest
                             docker logout ${ACR_LOGIN_SERVER}
                         """
-                        echo "✅ Images pushed to Azure Container Registry"
                     }
+                    echo "✅ Images pushed to Azure Container Registry"
                 }
             }
         }
         
-        /* COMMENTED OUT - Deploy to AKS stage
         stage('Deploy to AKS') {
             steps {
                 script {
+                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+                    echo "🚀 Deploying to AKS cluster..."
+                    echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
                     withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
                         sh """
                             export KUBECONFIG=\$KUBECONFIG
                             
-                            # Update deployment
-                            kubectl set image deployment/hr-ai-agent \
-                              hr-ai-agent=${ACR_LOGIN_SERVER}/${IMAGE_NAME}:${IMAGE_TAG} \
-                              -n hr-app
+                            # Update image tag in manifest
+                            sed -i 's|image: ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:.*|image: ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:${IMAGE_TAG}|g' ../k8s/04-backend.yaml
                             
-                            # Wait for rollout
-                            kubectl rollout status deployment/hr-ai-agent -n hr-app --timeout=5m
+                            # Apply the manifest (creates or updates deployment)
+                            kubectl apply -f ../k8s/04-backend.yaml
+                            
+                            # Wait for rollout to complete
+                            kubectl rollout status deployment/backend-api -n hr-app --timeout=5m
                             
                             # Verify deployment
-                            kubectl get pods -n hr-app -l app=hr-ai-agent
+                            echo "📋 Deployment Status:"
+                            kubectl get pods -n hr-app -l app=backend-api
                         """
-                        echo "✅ Deployment successful"
                     }
+                    echo "✅ Deployment to AKS successful"
                 }
             }
         }
-        */ // End of commented Deploy to AKS stage
     }
     
     post {
@@ -144,19 +164,18 @@ pipeline {
         success {
             echo """
             ========================================
-            ✅ AI Agent Pipeline Successful!
+            ✅ Backend API Pipeline Successful!
             ========================================
             Image: ${ACR_LOGIN_SERVER}/${IMAGE_NAME}:${IMAGE_TAG}
             Registry: Azure Container Registry
-            Status: Images pushed to ACR successfully
-            Note: Deploy to AKS stage is commented out
+            Deployed to: hr-app namespace
             ========================================
             """
         }
         failure {
             echo """
             ========================================
-            ❌ AI Agent Pipeline Failed!
+            ❌ Backend API Pipeline Failed!
             ========================================
             Check the logs above for details
             ========================================
