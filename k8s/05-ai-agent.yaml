@@ -1,0 +1,85 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hr-ai-agent
+  namespace: hr-app
+  labels:
+    app: hr-ai-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hr-ai-agent
+  template:
+    metadata:
+      labels:
+        app: hr-ai-agent
+    spec:
+      containers:
+      - name: hr-ai-agent
+        image: hracrregistry.azurecr.io/hr-ai-agent:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8001
+        env:
+        - name: MONGODB_URL
+          valueFrom:
+            secretKeyRef:
+              name: hr-secrets
+              key: MONGODB_URL
+        - name: GOOGLE_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: hr-secrets
+              key: GOOGLE_API_KEY
+        - name: DATABASE_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: hr-config
+              key: DATABASE_NAME
+        - name: ENVIRONMENT
+          valueFrom:
+            configMapKeyRef:
+              name: hr-config
+              key: ENVIRONMENT
+        volumeMounts:
+        - name: output-storage
+          mountPath: /app/output
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1Gi"
+            cpu: "1000m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8001
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8001
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+      volumes:
+      - name: output-storage
+        persistentVolumeClaim:
+          claimName: resume-storage
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hr-ai-agent-service
+  namespace: hr-app
+spec:
+  selector:
+    app: hr-ai-agent
+  ports:
+    - protocol: TCP
+      port: 8001
+      targetPort: 8001
