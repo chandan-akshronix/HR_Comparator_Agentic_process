@@ -28,11 +28,16 @@ spec:
             secretKeyRef:
               name: hr-secrets
               key: MONGODB_URL
-        - name: GOOGLE_API_KEY
+        - name: AZURE_OPENAI_ENDPOINT
           valueFrom:
             secretKeyRef:
               name: hr-secrets
-              key: GOOGLE_API_KEY
+              key: AZURE_OPENAI_ENDPOINT
+        - name: AZURE_OPENAI_KEY
+          valueFrom:
+            secretKeyRef:
+              name: hr-secrets
+              key: AZURE_OPENAI_KEY
         - name: DATABASE_NAME
           valueFrom:
             configMapKeyRef:
