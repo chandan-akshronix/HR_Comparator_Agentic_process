@@ -88,6 +88,7 @@ spec:
   selector:
     app: hr-ai-agent
   ports:
-    - protocol: TCP
+    - name: http
+      protocol: TCP
       port: 9000
       targetPort: 9000
