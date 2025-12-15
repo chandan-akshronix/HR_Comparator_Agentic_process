@@ -84,6 +84,8 @@ kind: Service
 metadata:
   name: hr-ai-agent-service
   namespace: hr-app
+  labels:
+    app: hr-ai-agent
 spec:
   selector:
     app: hr-ai-agent
