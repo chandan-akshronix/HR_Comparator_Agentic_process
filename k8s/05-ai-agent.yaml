@@ -10,6 +10,8 @@ spec:
   selector:
     matchLabels:
       app: hr-ai-agent
+  strategy:
+    type: Recreate
   template:
     metadata:
       labels:
