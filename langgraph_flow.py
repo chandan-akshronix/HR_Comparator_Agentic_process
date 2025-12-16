@@ -1,6 +1,8 @@
 import logging
+import time
 from langgraph.graph import StateGraph
 from azure_llm import get_azure_llm
+import metrics  # Prometheus metrics for LLM tracking
 
 # ==========================================
 # Setup
@@ -161,13 +163,37 @@ def jd_extractor_node(state: dict) -> dict:
         state["jd_extracted"] = "{}"
         return state
 
+    start_time = time.time()
     try:
         response = llm.invoke(JD_PROMPT.format(jd_text=jd_text))
+        duration = time.time() - start_time
         state["jd_extracted"] = response.content
-        logging.info("✅ JD extraction completed.")
+
+          # Track LLM metrics
+        metrics.llm_requests_total.labels(model='gpt-4o', operation='jd_extract', status='success').inc()
+        metrics.llm_request_duration.labels(model='gpt-4o', operation='jd_extract').observe(duration)
+        
+        # Track tokens if available in response
+        if hasattr(response, 'response_metadata') and response.response_metadata:
+            token_usage = response.response_metadata.get('token_usage', {})
+            if token_usage:
+                metrics.llm_tokens_used.labels(model='gpt-4o', type='prompt').inc(token_usage.get('prompt_tokens', 0))
+                metrics.llm_tokens_used.labels(model='gpt-4o', type='completion').inc(token_usage.get('completion_tokens', 0))
+        
+        # Track agent extraction
+        metrics.agent_extractions_total.labels(agent_type='jd_extractor', status='success').inc()
+        metrics.agent_extraction_duration.labels(agent_type='jd_extractor').observe(duration)
+        
+        logging.info(f"✅ JD extraction completed in {duration:.2f}s")
     except Exception as e:
+        duration = time.time() - start_time
         logging.error(f"❌ JD extractor error: {e}")
         state["jd_extracted"] = "{}"
+      
+        # Track failure metrics
+        metrics.llm_requests_total.labels(model='gpt-4o', operation='jd_extract', status='failed').inc()
+        metrics.agent_extractions_total.labels(agent_type='jd_extractor', status='failed').inc()
+        metrics.track_processing_error('llm_error')
     return state
 
 
@@ -185,14 +211,36 @@ def resume_extractor_node(state: dict) -> dict:
         logging.warning("⚠️ Resume text missing in state.")
         state["resume_extracted"] = "{}"
         return state
-
+      
+    start_time = time.time()
     try:
         response = llm.invoke(RESUME_PROMPT.format(resume_text=resume_text))
         state["resume_extracted"] = response.content
-        logging.info("✅ Resume extraction completed.")
+        # Track LLM metrics
+        metrics.llm_requests_total.labels(model='gpt-4o', operation='resume_extract', status='success').inc()
+        metrics.llm_request_duration.labels(model='gpt-4o', operation='resume_extract').observe(duration)
+        
+        # Track tokens if available in response
+        if hasattr(response, 'response_metadata') and response.response_metadata:
+            token_usage = response.response_metadata.get('token_usage', {})
+            if token_usage:
+                metrics.llm_tokens_used.labels(model='gpt-4o', type='prompt').inc(token_usage.get('prompt_tokens', 0))
+                metrics.llm_tokens_used.labels(model='gpt-4o', type='completion').inc(token_usage.get('completion_tokens', 0))
+        
+        # Track agent extraction
+        metrics.agent_extractions_total.labels(agent_type='resume_extractor', status='success').inc()
+        metrics.agent_extraction_duration.labels(agent_type='resume_extractor').observe(duration)
+        
+        logging.info(f"✅ Resume extraction completed in {duration:.2f}s")
     except Exception as e:
+        duration = time.time() - start_time
         logging.error(f"❌ Resume extractor error: {e}")
         state["resume_extracted"] = "{}"
+
+        # Track failure metrics
+        metrics.llm_requests_total.labels(model='gpt-4o', operation='resume_extract', status='failed').inc()
+        metrics.agent_extractions_total.labels(agent_type='resume_extractor', status='failed').inc()
+        metrics.track_processing_error('llm_error')
     return state
 
 
@@ -207,17 +255,59 @@ def comparator_node(state: dict) -> dict:
         logging.warning("⚠️ Missing extracted data for comparison.")
         state["comparison_result"] = "{}"
         return state
-
+      
+    start_time = time.time()
     try:
         response = llm.invoke(COMPARATOR_PROMPT.format(
             jd_extracted=jd_extracted,
             resume_extracted=resume_extracted
         ))
+        duration = time.time() - start_time
         state["comparison_result"] = response.content
-        logging.info("✅ Comparison completed.")
+      
+        # Track LLM metrics
+        metrics.llm_requests_total.labels(model='gpt-4o', operation='compare', status='success').inc()
+        metrics.llm_request_duration.labels(model='gpt-4o', operation='compare').observe(duration)
+        
+        # Track tokens if available in response
+        if hasattr(response, 'response_metadata') and response.response_metadata:
+            token_usage = response.response_metadata.get('token_usage', {})
+            if token_usage:
+                metrics.llm_tokens_used.labels(model='gpt-4o', type='prompt').inc(token_usage.get('prompt_tokens', 0))
+                metrics.llm_tokens_used.labels(model='gpt-4o', type='completion').inc(token_usage.get('completion_tokens', 0))
+        
+        # Track agent extraction (comparator is also an agent)
+        metrics.agent_extractions_total.labels(agent_type='comparator', status='success').inc()
+        metrics.agent_extraction_duration.labels(agent_type='comparator').observe(duration)
+        
+        # Track pipeline run success
+        metrics.pipeline_runs_total.labels(status='success').inc()
+        metrics.pipeline_duration.observe(duration)
+        
+        # Try to extract and track match score from result
+        try:
+            import json
+            result_text = response.content.replace('```json', '').replace('```', '').strip()
+            result_json = json.loads(result_text)
+            score = float(result_json.get('total_score', 0))
+            category = result_json.get('fit_category', 'Unknown')
+            stability = float(result_json.get('parameter_breakdown', {}).get('Stability_Score', 0) or 0)
+            
+            metrics.track_match_result(score, category, stability)
+        except Exception as parse_error:
+            logging.warning(f"Could not extract match score for metrics: {parse_error}")
+        
+        logging.info(f"✅ Comparison completed in {duration:.2f}s")
     except Exception as e:
+        duration = time.time() - start_time
         logging.error(f"❌ Comparator node error: {e}")
         state["comparison_result"] = "{}"
+
+        # Track failure metrics
+        metrics.llm_requests_total.labels(model='gpt-4o', operation='compare', status='failed').inc()
+        metrics.agent_extractions_total.labels(agent_type='comparator', status='failed').inc()
+        metrics.pipeline_runs_total.labels(status='failed').inc()
+        metrics.track_processing_error('llm_error')
     return state
 
 # ==========================================
