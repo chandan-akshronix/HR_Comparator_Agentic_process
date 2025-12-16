@@ -74,6 +74,18 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+# ============================================
+# Prometheus Metrics Instrumentation
+# ============================================
+from prometheus_fastapi_instrumentator import Instrumentator
+
+instrumentator = Instrumentator(
+    should_group_status_codes=False,
+    should_ignore_untemplated=True,
+    excluded_handlers=["/health", "/metrics"],
+)
+
+instrumentator.instrument(app).expose(app, endpoint="/metrics")
 
 # ============================================
 # Request/Response Models
