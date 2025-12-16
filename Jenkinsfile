@@ -55,7 +55,9 @@ pipeline {
                             // error "❌ Quality Gate failed with status: ${qg.status}"
                         } else {
                             echo "✅ Quality Gate passed successfully"
-                }
+                      }
+                  }
+               }
             }
         }
         
